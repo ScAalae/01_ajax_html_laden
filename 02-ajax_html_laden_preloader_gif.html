@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <title>Ajax / HTML nachladen</title>
+    <style>
+        .preload {
+            background: url(spinner.gif) center center;
+            width: 100px;
+            height: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="main">
+        Originaltext, der beim ersten Laden der Webseite angezeigt wird.
+    </div>
+    
+    <div id="preloader" style="display: none;"><img src="spinner.gif"></div>
+
+    <button id="ajaxButton" type="button">Inhalt mit Hilfe von Ajax aktualisieren</button>
+
+    <script>
+        function textAustauschen() {
+            let zielElement = document.getElementById("main");
+            let preloderElement = document.getElementById("preloader");
+
+            /* === 1. Erzeugen des AJAX-Objektes === */
+            let xhr = new XMLHttpRequest();
+
+            /* === 2. Erstellen des EventHandlers (reagiert auf Antworten des Servers) === */
+            xhr.onreadystatechange = function() {
+                console.log('readyState: ' + xhr.readyState);
+                if (xhr.readyState < 4) {
+                    preloderElement.style.display="block";
+                    zielElement.innerHTML = "";
+                }
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    zielElement.innerHTML = xhr.responseText;
+                    preloderElement.style.display="none";
+                }
+            }
+
+            /* === 3. Anfrage (mit Details zur Datenübertragung) erstellen === */
+            xhr.open('GET', 'html_inhalt.php', true);
+            
+            /* === 4. Anfrage absenden === */
+            xhr.send();
+        }
+
+        let button = document.getElementById("ajaxButton");
+        button.addEventListener("click", textAustauschen);
+    </script>
+
+</body>
+
+</html>
